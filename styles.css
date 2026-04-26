@@ -1,214 +1,191 @@
 /* RESET */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-/* GLOBAL */
 body {
-    font-family: Arial, sans-serif;
-    background: #0a0a0a;
-    color: white;
-    line-height: 1.6;
-    padding-top: 110px; /* FIX NAVBAR OVERLAP */
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+  color: #111;
+  background: #fff;
 }
 
-html {
-    scroll-padding-top: 120px;
-}
-
-/* CONTAINER (FIXES LEFT ALIGNMENT) */
+/* GLOBAL CONTAINER (THIS FIXES EVERYTHING) */
 .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
 }
 
 /* NAVBAR */
 .navbar {
-    position: fixed;
-    top: 0;
-    width: 100%;
-    background: rgba(0,0,0,0.9);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 50px;
-    z-index: 999;
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(255,215,0,0.2);
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background: rgba(11, 61, 145, 0.95);
+  z-index: 999;
 }
 
-/* LOGO (MORE DOMINANT) */
-.logo img {
-    height: 85px;
-    filter: drop-shadow(0 0 8px gold);
+.nav-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
 }
 
-/* NAV LINKS (FIX COLOR ISSUE) */
 .navbar nav a {
-    margin-left: 25px;
-    text-decoration: none;
-    color: gold;
-    font-weight: 500;
-    transition: 0.3s;
+  color: white;
+  margin-left: 18px;
+  text-decoration: none;
+  font-weight: 500;
 }
 
 .navbar nav a:hover {
-    color: white;
-    text-shadow: 0 0 8px gold;
+  opacity: 0.8;
+}
+
+.logo img {
+  height: 40px;
 }
 
 /* HERO */
 .hero {
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    text-align: center;
+  padding: 140px 0 80px;
+  background: #0b3d91;
+  color: white;
+  text-align: center;
 }
 
-/* HERO WATERMARK (FIX VISIBILITY) */
-.hero::before {
-    content: "";
-    position: absolute;
-    background: url("logo.png") no-repeat center;
-    background-size: 500px;
-    opacity: 0.12;
-    width: 100%;
-    height: 100%;
-}
-
-/* DATA LINE ANIMATION */
-.hero::after {
-    content: "";
-    position: absolute;
-    width: 100%;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, gold, transparent);
-    animation: moveLine 3s infinite;
-    top: 65%;
-}
-
-@keyframes moveLine {
-    0% { transform: translateX(-100%); }
-    100% { transform: translateX(100%); }
-}
-
-/* HERO CONTENT */
 .hero-content {
-    position: relative;
-    z-index: 1;
-}
-
-/* HERO LOGO (ADDED VISIBILITY) */
-.hero-logo {
-    width: 180px;
-    margin-bottom: 20px;
-    filter: drop-shadow(0 0 20px rgba(255,215,0,0.5));
+  max-width: 800px;
+  margin: auto;
 }
 
 .hero h1 {
-    font-size: 2.8rem;
-    margin-bottom: 20px;
+  font-size: 2.5rem;
+  margin-bottom: 15px;
 }
 
 .hero p {
-    max-width: 600px;
-    margin: auto;
-    color: #bbb;
+  font-size: 1.1rem;
+  margin-bottom: 25px;
 }
 
-/* BUTTONS */
-.btn-primary {
-    background: gold;
-    color: black;
-    border: none;
-    padding: 12px 25px;
-    margin: 15px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: 0.3s;
-}
-
-.btn-primary:hover {
-    box-shadow: 0 0 15px gold;
-}
-
-.btn-secondary {
-    background: transparent;
-    border: 1px solid gold;
-    color: gold;
-    padding: 12px 25px;
-    cursor: pointer;
-}
-
-.btn-secondary:hover {
-    box-shadow: 0 0 10px gold;
+.hero-buttons button {
+  margin: 5px;
 }
 
 /* SECTIONS */
 .section {
-    padding: 100px 0;
-    text-align: center;
+  padding: 70px 0;
 }
 
 .section.dark {
-    background: #111;
+  background: #f5f7fa;
 }
 
-.section h1,
-.section h2 {
-    margin-bottom: 25px;
+h2 {
+  text-align: center;
+  margin-bottom: 40px;
+  font-size: 2rem;
 }
 
-/* GRID */
+/* TEXT CENTER */
+.center-text {
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto 30px;
+}
+
+/* GRIDS */
 .grid-3 {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 25px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
 }
 
 .grid-4 {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
 }
 
 /* CARDS */
-.card {
-    background: #1a1a1a;
-    padding: 25px;
-    border: 1px solid #333;
-    transition: 0.3s;
+.card, .cap {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
 }
 
-.card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 0 15px rgba(255,215,0,0.3);
+/* BUTTONS */
+.btn-primary {
+  background: #0b3d91;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.btn-secondary {
+  background: transparent;
+  color: white;
+  border: 1px solid white;
+  padding: 10px 18px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+/* CTA */
+.cta {
+  background: #0b3d91;
+  color: white;
+  text-align: center;
+  padding: 60px 20px;
 }
 
 /* FORM */
-form input, form textarea, form select {
-    width: 100%;
-    max-width: 500px;
-    padding: 10px;
-    margin-bottom: 15px;
-    border: none;
+form {
+  max-width: 600px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
 }
 
-.center-text {
-    max-width: 700px;
-    margin: auto;
-    color: #bbb;
+form input,
+form select,
+form textarea {
+  margin-bottom: 12px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
 }
 
 /* FOOTER */
 footer {
-    text-align: center;
-    padding: 20px;
-    background: black;
-    color: #777;
+  background: #111;
+  color: white;
+  text-align: center;
+  padding: 20px;
+  margin-top: 40px;
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .grid-3 {
+    grid-template-columns: 1fr;
+  }
+
+  .grid-4 {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .hero h1 {
+    font-size: 1.8rem;
+  }
 }

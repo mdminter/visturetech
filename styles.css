@@ -1,34 +1,65 @@
-/* RESET */
+/* =========================
+   BASE RESET
+========================= */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* BODY */
 body {
   font-family: Arial, sans-serif;
   background: #0b0b0b;
   color: #f5f5f5;
   line-height: 1.6;
   padding-top: 80px;
+  overflow-x: hidden;
 }
 
-/* CONTAINER */
+/* =========================
+   GLOBAL CONTAINER
+========================= */
 .container {
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 24px;
 }
 
-/* NAVBAR */
+/* =========================
+   BACKGROUND LAYER (ELITE DEPTH)
+========================= */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(212,175,55,0.08), transparent 40%),
+    radial-gradient(circle at 85% 70%, rgba(212,175,55,0.05), transparent 45%);
+  z-index: -2;
+}
+
+/* subtle grid watermark */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+  z-index: -1;
+}
+
+/* =========================
+   NAVBAR (GLASS + AUTHORITY)
+========================= */
 .navbar {
   position: fixed;
   top: 0;
   width: 100%;
-  background: rgba(10,10,10,0.95);
-  border-bottom: 1px solid rgba(212,175,55,0.2);
+  background: rgba(10,10,10,0.75);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(212,175,55,0.18);
   z-index: 999;
 }
 
@@ -39,102 +70,150 @@ body {
   height: 70px;
 }
 
-/* LOGO FIX */
+/* logo refinement */
 .logo img {
-  height: 40px;
+  height: 38px;
   width: auto;
-  max-width: 150px;
-  display: block;
+  filter: drop-shadow(0 0 8px rgba(212,175,55,0.25));
 }
 
-/* NAV LINKS */
+/* nav links */
 .nav-links {
   display: flex;
-  align-items: center;
+  gap: 22px;
 }
 
 .nav-links a {
-  color: #f5f5f5;
-  margin-left: 20px;
+  color: #eaeaea;
   text-decoration: none;
-  font-weight: 500;
+  font-size: 0.95rem;
+  position: relative;
+  transition: 0.3s;
+}
+
+.nav-links a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -6px;
+  width: 0%;
+  height: 1px;
+  background: #d4af37;
+  transition: 0.3s;
 }
 
 .nav-links a:hover {
   color: #d4af37;
 }
 
-/* HERO */
+.nav-links a:hover::after {
+  width: 100%;
+}
+
+/* =========================
+   HERO (ELITE IMPACT LAYER)
+========================= */
 .hero {
-  padding: 100px 0;
+  padding: 120px 0 90px;
   text-align: center;
+  position: relative;
 }
 
-.hero-inner h1 {
-  font-size: 2.5rem;
-  margin-bottom: 15px;
+.hero h1 {
+  font-size: 3rem;
+  letter-spacing: -0.5px;
+  margin-bottom: 18px;
+  animation: fadeUp 0.9s ease forwards;
 }
 
-.hero-inner p {
+.hero p {
+  max-width: 780px;
+  margin: 0 auto 28px;
   color: #cfcfcf;
-  max-width: 700px;
-  margin: 0 auto 25px;
+  animation: fadeUp 1.1s ease forwards;
 }
 
 .hero-actions {
   display: flex;
   justify-content: center;
-  gap: 10px;
+  gap: 12px;
+  animation: fadeUp 1.3s ease forwards;
 }
 
-/* SECTIONS */
+/* =========================
+   SECTIONS (SPACED LIKE SaaS)
+========================= */
 .section {
-  padding: 70px 0;
+  padding: 90px 0;
 }
 
 .section.dark {
-  background: rgba(255,255,255,0.03);
+  background: rgba(255,255,255,0.02);
+  border-top: 1px solid rgba(212,175,55,0.08);
+  border-bottom: 1px solid rgba(212,175,55,0.08);
 }
 
-/* HEADINGS */
+/* headings */
 h2 {
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: 50px;
+  font-size: 2rem;
+  letter-spacing: -0.3px;
 }
 
-/* GRIDS */
+/* =========================
+   GRIDS
+========================= */
 .grid-3 {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
+  gap: 22px;
 }
 
 .grid-4 {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 15px;
+  gap: 16px;
 }
 
-/* CARDS */
+/* =========================
+   CARDS (PREMIUM FLOAT LAYER)
+========================= */
 .card, .pill {
-  background: rgba(20,20,20,0.9);
+  background: rgba(18,18,18,0.9);
   border: 1px solid rgba(212,175,55,0.15);
-  padding: 20px;
-  border-radius: 10px;
+  border-radius: 12px;
+  padding: 22px;
   text-align: center;
+  transition: all 0.35s ease;
+  transform: translateY(0);
 }
 
-/* BUTTONS */
+.card:hover, .pill:hover {
+  transform: translateY(-6px);
+  border-color: rgba(212,175,55,0.45);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+}
+
+/* =========================
+   BUTTONS (EXECUTIVE STYLE)
+========================= */
 .btn {
-  padding: 10px 18px;
-  border-radius: 6px;
+  padding: 11px 20px;
+  border-radius: 8px;
   cursor: pointer;
   border: none;
+  font-weight: 500;
+  transition: 0.3s;
 }
 
 .primary {
   background: linear-gradient(135deg, #d4af37, #b68e2d);
   color: #0b0b0b;
+}
+
+.primary:hover {
+  transform: scale(1.05);
 }
 
 .outline {
@@ -143,32 +222,62 @@ h2 {
   color: #d4af37;
 }
 
-/* CTA */
-.cta {
+.outline:hover {
   background: rgba(212,175,55,0.08);
-  text-align: center;
-  padding: 70px 20px;
 }
 
-/* FOOTER */
+/* =========================
+   CTA (HIGH-CONVERSION BLOCK)
+========================= */
+.cta {
+  background: linear-gradient(135deg, rgba(212,175,55,0.12), transparent);
+  text-align: center;
+  padding: 90px 20px;
+}
+
+/* =========================
+   FOOTER
+========================= */
 footer {
   background: #000;
   text-align: center;
-  padding: 20px;
-  border-top: 1px solid rgba(212,175,55,0.2);
+  padding: 22px;
+  border-top: 1px solid rgba(212,175,55,0.15);
+  color: #999;
 }
 
-/* RESPONSIVE */
+/* =========================
+   ANIMATIONS (SUBTLE ELITE MOTION)
+========================= */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
 @media (max-width: 900px) {
   .grid-3, .grid-4 {
     grid-template-columns: 1fr;
   }
 
-  .hero-inner h1 {
-    font-size: 1.8rem;
+  .hero h1 {
+    font-size: 2rem;
   }
 
   .hero-actions {
     flex-direction: column;
+  }
+
+  .nav-links {
+    gap: 14px;
+    font-size: 0.85rem;
   }
 }

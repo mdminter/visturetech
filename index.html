@@ -11,34 +11,41 @@
 
 <header class="navbar">
   <div class="container nav-inner">
+
     <div class="logo">
       <img src="logo.png" alt="Visture Technologies">
     </div>
 
     <nav class="nav-links">
-      <a href="#">Home</a>
-      <a href="#">Solutions</a>
-      <a href="#">Case Studies</a>
-      <a href="#">About</a>
-      <a href="#">Contact</a>
+      <a href="#home">Home</a>
+      <a href="#solutions">Solutions</a>
+      <a href="#cases">Case Studies</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
     </nav>
+
   </div>
 </header>
 
-<section class="hero">
+<!-- HERO -->
+<section id="home" class="hero">
   <div class="container hero-inner">
+
     <h1>Engineering Intelligent Systems for a Digital-First World</h1>
     <p>Secure, scalable digital ecosystems for enterprise and government transformation.</p>
 
     <div class="hero-actions">
-      <button class="btn primary">Explore Solutions</button>
-      <button class="btn outline">Schedule Consultation</button>
+      <a href="#solutions" class="btn primary">Explore Solutions</a>
+      <a href="#contact" class="btn outline">Schedule Consultation</a>
     </div>
+
   </div>
 </section>
 
-<section class="section">
+<!-- SOLUTIONS -->
+<section id="solutions" class="section">
   <div class="container">
+
     <h2>What We Do</h2>
 
     <div class="grid-3">
@@ -57,45 +64,39 @@
         <p>Secure architecture across enterprise environments.</p>
       </div>
     </div>
+
   </div>
 </section>
 
-<section class="section dark">
+<!-- CASE STUDIES -->
+<section id="cases" class="section dark">
   <div class="container">
-    <h2>Core Capabilities</h2>
-
-    <div class="grid-4">
-      <div class="pill">System Architecture</div>
-      <div class="pill">Cloud Integration</div>
-      <div class="pill">Automation</div>
-      <div class="pill">Data Migration</div>
-      <div class="pill">Document Systems</div>
-      <div class="pill">Analytics</div>
-      <div class="pill">Cybersecurity</div>
-      <div class="pill">Disaster Recovery</div>
-    </div>
-  </div>
-</section>
-
-<section class="section">
-  <div class="container">
-    <h2>Industries We Serve</h2>
+    <h2>Case Studies</h2>
 
     <div class="grid-3">
-      <div class="card">Government</div>
-      <div class="card">Healthcare</div>
-      <div class="card">Financial Services</div>
-      <div class="card">Enterprise</div>
-      <div class="card">Logistics</div>
-      <div class="card">Technology</div>
+      <div class="card">Government System Modernization</div>
+      <div class="card">Enterprise Data Migration</div>
+      <div class="card">Workflow Automation Platform</div>
     </div>
   </div>
 </section>
 
-<section class="cta">
+<!-- ABOUT -->
+<section id="about" class="section">
+  <div class="container">
+    <h2>About Visture</h2>
+
+    <div class="card">
+      We design secure, scalable digital ecosystems for mission-critical environments.
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="cta">
   <div class="container">
     <h2>Ready to modernize your systems?</h2>
-    <button class="btn primary">Start a Project</button>
+    <a href="mailto:contact@visture.com" class="btn primary">Start a Project</a>
   </div>
 </section>
 

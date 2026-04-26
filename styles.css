@@ -20,7 +20,21 @@ body {
 }
 
 /* =========================
-   BACKGROUND DEPTH (APPLE STYLE)
+   AI INTELLIGENCE LAYER (CANVAS BACKGROUND)
+========================= */
+#ai-grid {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -4;
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+/* =========================
+   BACKGROUND DEPTH (APPLE + AI FUSION LAYER)
 ========================= */
 body::before {
   content: "";
@@ -28,19 +42,23 @@ body::before {
   inset: 0;
   background:
     radial-gradient(circle at 20% 15%, rgba(212,175,55,0.10), transparent 45%),
-    radial-gradient(circle at 80% 70%, rgba(255,255,255,0.04), transparent 50%);
-  z-index: -2;
+    radial-gradient(circle at 80% 70%, rgba(120,180,255,0.06), transparent 50%);
+  z-index: -3;
+  pointer-events: none;
 }
 
+/* DATA GRID / MIST LAYER */
 body::after {
   content: "";
   position: fixed;
   inset: 0;
-  background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
-                    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-image:
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
   background-size: 70px 70px;
-  z-index: -1;
-  opacity: 0.5;
+  opacity: 0.35;
+  z-index: -2;
+  pointer-events: none;
 }
 
 /* =========================
@@ -73,8 +91,7 @@ body::after {
 }
 
 /* =========================
-   LOGO (THIS IS THE FIX)
-   → makes it feel like a BRAND ANCHOR
+   LOGO (BRAND ANCHOR ENHANCED)
 ========================= */
 .logo {
   display: flex;
@@ -141,11 +158,12 @@ body::after {
 }
 
 /* =========================
-   HERO (APPLE STYLE FOCUS)
+   HERO (APPLE FOCUS LAYER)
 ========================= */
 .hero {
   padding: 130px 0 100px;
   text-align: center;
+  position: relative;
 }
 
 .hero h1 {
@@ -163,7 +181,7 @@ body::after {
 }
 
 /* =========================
-   SECTIONS (AIRY APPLE SPACING)
+   SECTIONS
 ========================= */
 .section {
   padding: 100px 0;
@@ -174,7 +192,7 @@ body::after {
 }
 
 /* =========================
-   HEADINGS (WEIGHTED HIERARCHY)
+   HEADINGS
 ========================= */
 h2 {
   text-align: center;
@@ -193,7 +211,7 @@ h2 {
 }
 
 /* =========================
-   CARDS (SOFT LIFT)
+   CARDS (AI-ENHANCED LIFT)
 ========================= */
 .card {
   background: rgba(18,18,18,0.85);
@@ -201,6 +219,18 @@ h2 {
   border-radius: 14px;
   padding: 22px;
   transition: all 0.35s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+/* subtle AI glow pulse */
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(212,175,55,0.08), transparent 60%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
 }
 
 .card:hover {
@@ -209,8 +239,12 @@ h2 {
   box-shadow: 0 12px 30px rgba(0,0,0,0.4);
 }
 
+.card:hover::before {
+  opacity: 1;
+}
+
 /* =========================
-   BUTTONS (APPLE-LIKE MINIMAL LUXE)
+   BUTTONS
 ========================= */
 .btn {
   display: inline-block;
@@ -240,7 +274,7 @@ h2 {
 }
 
 /* =========================
-   CTA (FOCUSED IMPACT)
+   CTA
 ========================= */
 .cta {
   text-align: center;
@@ -249,7 +283,7 @@ h2 {
 }
 
 /* =========================
-   FOOTER (SUBTLE)
+   FOOTER
 ========================= */
 footer {
   text-align: center;
@@ -260,7 +294,7 @@ footer {
 }
 
 /* =========================
-   ANIMATION SYSTEM (APPLE STYLE)
+   ANIMATION SYSTEM
 ========================= */
 @keyframes fadeUp {
   from {

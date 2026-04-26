@@ -1,22 +1,63 @@
+/* RESET */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* GLOBAL */
 body {
     font-family: Arial, sans-serif;
     background: #0a0a0a;
     color: white;
+    line-height: 1.6;
+    padding-top: 110px; /* FIX NAVBAR OVERLAP */
+}
+
+html {
+    scroll-padding-top: 120px;
+}
+
+/* CONTAINER (FIXES LEFT ALIGNMENT) */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
 }
 
 /* NAVBAR */
 .navbar {
     position: fixed;
+    top: 0;
     width: 100%;
     background: rgba(0,0,0,0.9);
     display: flex;
     justify-content: space-between;
-    padding: 20px 50px;
+    align-items: center;
+    padding: 15px 50px;
     z-index: 999;
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255,215,0,0.2);
 }
 
+/* LOGO (MORE DOMINANT) */
 .logo img {
-    height: 70px;
+    height: 85px;
+    filter: drop-shadow(0 0 8px gold);
+}
+
+/* NAV LINKS (FIX COLOR ISSUE) */
+.navbar nav a {
+    margin-left: 25px;
+    text-decoration: none;
+    color: gold;
+    font-weight: 500;
+    transition: 0.3s;
+}
+
+.navbar nav a:hover {
+    color: white;
+    text-shadow: 0 0 8px gold;
 }
 
 /* HERO */
@@ -29,13 +70,13 @@ body {
     text-align: center;
 }
 
-/* LOGO WATERMARK */
+/* HERO WATERMARK (FIX VISIBILITY) */
 .hero::before {
     content: "";
     position: absolute;
     background: url("logo.png") no-repeat center;
-    background-size: 400px;
-    opacity: 0.05;
+    background-size: 500px;
+    opacity: 0.12;
     width: 100%;
     height: 100%;
 }
@@ -48,7 +89,7 @@ body {
     height: 2px;
     background: linear-gradient(90deg, transparent, gold, transparent);
     animation: moveLine 3s infinite;
-    top: 60%;
+    top: 65%;
 }
 
 @keyframes moveLine {
@@ -56,13 +97,39 @@ body {
     100% { transform: translateX(100%); }
 }
 
+/* HERO CONTENT */
+.hero-content {
+    position: relative;
+    z-index: 1;
+}
+
+/* HERO LOGO (ADDED VISIBILITY) */
+.hero-logo {
+    width: 180px;
+    margin-bottom: 20px;
+    filter: drop-shadow(0 0 20px rgba(255,215,0,0.5));
+}
+
+.hero h1 {
+    font-size: 2.8rem;
+    margin-bottom: 20px;
+}
+
+.hero p {
+    max-width: 600px;
+    margin: auto;
+    color: #bbb;
+}
+
 /* BUTTONS */
 .btn-primary {
     background: gold;
     color: black;
-    padding: 12px 25px;
     border: none;
+    padding: 12px 25px;
+    margin: 15px;
     cursor: pointer;
+    font-weight: bold;
     transition: 0.3s;
 }
 
@@ -71,19 +138,48 @@ body {
 }
 
 .btn-secondary {
+    background: transparent;
     border: 1px solid gold;
     color: gold;
     padding: 12px 25px;
-    background: transparent;
+    cursor: pointer;
 }
 
 .btn-secondary:hover {
     box-shadow: 0 0 10px gold;
 }
 
+/* SECTIONS */
+.section {
+    padding: 100px 0;
+    text-align: center;
+}
+
+.section.dark {
+    background: #111;
+}
+
+.section h1,
+.section h2 {
+    margin-bottom: 25px;
+}
+
+/* GRID */
+.grid-3 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 25px;
+}
+
+.grid-4 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
 /* CARDS */
 .card {
-    background: #111;
+    background: #1a1a1a;
     padding: 25px;
     border: 1px solid #333;
     transition: 0.3s;
@@ -92,4 +188,27 @@ body {
 .card:hover {
     transform: translateY(-5px);
     box-shadow: 0 0 15px rgba(255,215,0,0.3);
+}
+
+/* FORM */
+form input, form textarea, form select {
+    width: 100%;
+    max-width: 500px;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: none;
+}
+
+.center-text {
+    max-width: 700px;
+    margin: auto;
+    color: #bbb;
+}
+
+/* FOOTER */
+footer {
+    text-align: center;
+    padding: 20px;
+    background: black;
+    color: #777;
 }

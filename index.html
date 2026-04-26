@@ -112,49 +112,85 @@ const ctx = canvas.getContext("2d");
 
 let w, h;
 let nodes = [];
+let mouse = { x: null, y: null };
+let scrollY = 0;
 
 function resize() {
   w = canvas.width = window.innerWidth;
   h = canvas.height = window.innerHeight;
+}
 
+function createNodes(count) {
   nodes = [];
-  for (let i = 0; i < 60; i++) {
+  for (let i = 0; i < count; i++) {
     nodes.push({
       x: Math.random() * w,
       y: Math.random() * h,
-      vx: (Math.random() - 0.5) * 0.4,
-      vy: (Math.random() - 0.5) * 0.4
+      vx: (Math.random() - 0.5) * 0.6,
+      vy: (Math.random() - 0.5) * 0.6
     });
   }
+}
+
+/* scroll = intelligence intensity */
+function getIntensity() {
+  const heroZone = Math.max(0, 1 - scrollY / 600);
+  const midZone = Math.min(1, scrollY / 1200);
+  return heroZone + midZone * 0.6;
 }
 
 function draw() {
   ctx.clearRect(0, 0, w, h);
 
+  const intensity = getIntensity();
+
   nodes.forEach(n => {
-    n.x += n.vx;
-    n.y += n.vy;
+
+    /* mouse attraction (interaction field) */
+    if (mouse.x && mouse.y) {
+      const dx = mouse.x - n.x;
+      const dy = mouse.y - n.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+
+      if (dist < 120) {
+        n.x += dx * 0.002 * intensity;
+        n.y += dy * 0.002 * intensity;
+      }
+    }
+
+    n.x += n.vx * intensity;
+    n.y += n.vy * intensity;
 
     if (n.x < 0 || n.x > w) n.vx *= -1;
     if (n.y < 0 || n.y > h) n.vy *= -1;
 
+    /* node strength changes with scroll */
+    const size = 1.5 + intensity * 1.5;
+
     ctx.beginPath();
-    ctx.arc(n.x, n.y, 2, 0, Math.PI * 2);
-    ctx.fillStyle = "rgba(212,175,55,0.35)";
+    ctx.arc(n.x, n.y, size, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(212,175,55,${0.15 + intensity * 0.35})`;
     ctx.fill();
   });
 
+  /* connections */
   for (let i = 0; i < nodes.length; i++) {
     for (let j = i + 1; j < nodes.length; j++) {
+
       const dx = nodes[i].x - nodes[j].x;
       const dy = nodes[i].y - nodes[j].y;
       const dist = Math.sqrt(dx * dx + dy * dy);
 
-      if (dist < 120) {
+      const threshold = 110 + (1 - intensity) * 60;
+
+      if (dist < threshold) {
         ctx.beginPath();
         ctx.moveTo(nodes[i].x, nodes[i].y);
         ctx.lineTo(nodes[j].x, nodes[j].y);
-        ctx.strokeStyle = `rgba(212,175,55,${1 - dist / 120})`;
+
+        ctx.strokeStyle =
+          `rgba(212,175,55,${(1 - dist / threshold) * intensity})`;
+
         ctx.lineWidth = 0.4;
         ctx.stroke();
       }
@@ -164,12 +200,23 @@ function draw() {
   requestAnimationFrame(draw);
 }
 
+/* scroll tracking */
+window.addEventListener("scroll", () => {
+  scrollY = window.scrollY;
+});
+
+/* mouse tracking */
+window.addEventListener("mousemove", (e) => {
+  mouse.x = e.clientX;
+  mouse.y = e.clientY;
+});
+
 window.addEventListener("resize", resize);
 
 resize();
+createNodes(85); // ↑ increased density = more “alive”
 draw();
 </script>
-
   
 </body>
 </html>

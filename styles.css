@@ -1,0 +1,153 @@
+/* RESET */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* BODY */
+body {
+    font-family: Arial, sans-serif;
+    background: #0a0a0a;
+    color: white;
+    line-height: 1.6;
+}
+
+/* NAVBAR */
+.navbar {
+    position: fixed;
+    width: 100%;
+    top: 0;
+    background: rgba(0,0,0,0.85);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 40px;
+    z-index: 999;
+}
+
+.logo img {
+    height: 50px;
+}
+
+.navbar nav a {
+    margin-left: 25px;
+    text-decoration: none;
+    color: #ccc;
+    transition: 0.3s;
+}
+
+.navbar nav a:hover {
+    color: gold;
+}
+
+/* HERO */
+.hero {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 20px;
+    background: radial-gradient(circle at center, #111, #000);
+}
+
+.hero h1 {
+    font-size: 2.8rem;
+    margin-bottom: 20px;
+}
+
+.hero p {
+    max-width: 600px;
+    margin: auto;
+    color: #bbb;
+}
+
+/* BUTTONS */
+.btn-primary {
+    background: gold;
+    color: black;
+    border: none;
+    padding: 12px 25px;
+    margin: 15px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn-secondary {
+    background: transparent;
+    border: 1px solid gold;
+    color: gold;
+    padding: 12px 25px;
+    cursor: pointer;
+}
+
+/* SECTIONS */
+.section {
+    padding: 80px 40px;
+    text-align: center;
+}
+
+.section.dark {
+    background: #111;
+}
+
+.section h2 {
+    margin-bottom: 40px;
+    font-size: 2rem;
+}
+
+/* GRID */
+.grid-3, .grid-4 {
+    display: grid;
+    gap: 20px;
+}
+
+.grid-3 {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+.grid-4 {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+/* CARDS */
+.card {
+    background: #1a1a1a;
+    padding: 25px;
+    border: 1px solid #333;
+    transition: 0.3s;
+}
+
+.card:hover {
+    border-color: gold;
+    transform: translateY(-5px);
+}
+
+/* CAPABILITIES */
+.cap {
+    padding: 15px;
+    border: 1px solid #333;
+}
+
+/* CTA */
+.cta {
+    padding: 80px 20px;
+    text-align: center;
+    background: black;
+}
+
+/* FOOTER */
+footer {
+    text-align: center;
+    padding: 20px;
+    background: #000;
+    color: #777;
+}
+
+/* TEXT */
+.center-text {
+    max-width: 600px;
+    margin: auto;
+    color: #bbb;
+}

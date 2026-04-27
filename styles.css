@@ -114,12 +114,25 @@ body::after {
   height: 42px;
   width: auto;
   display: block;
-  filter: drop-shadow(0 0 10px rgba(212,175,55,0.25));
+  filter: drop-shadow(0 0 16px rgba(212,175,55,0.25))
+  brightness(1.15); 
   transition: transform 0.3s ease;
 }
 
 .logo img:hover {
   transform: scale(1.05);
+  filter:
+    drop-shadow(0 0 18px rgba(212,175,55,0.55))
+    brightness(1.25);
+}
+
+/* 🔥 OPTIONAL BRAND TEXT (SUBTLE, NOT LOUD) */
+.logo::after {
+  content: "VISTURE";
+  font-size: 0.65rem;
+  letter-spacing: 2px;
+  color: rgba(212,175,55,0.7);
+  margin-left: 6px;
 }
 
 /* =========================

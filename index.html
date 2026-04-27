@@ -8,7 +8,9 @@
 </head>
 
 <body>
+
 <canvas id="ai-grid"></canvas>
+
 <header class="navbar">
   <div class="container nav-inner">
 
@@ -28,13 +30,15 @@
 </header>
 
 <!-- HERO -->
-<section id="home" class="hero">
+<section id="home" class="hero reveal">
   <div class="container hero-inner">
 
-    <h1>Engineering Intelligent Systems for a Digital-First World</h1>
-    <p>Secure, scalable digital ecosystems for enterprise and government transformation.</p>
+    <h1 class="reveal">Engineering Intelligent Systems for a Digital-First World</h1>
+    <p class="reveal reveal-delay-1">
+      Secure, scalable digital ecosystems for enterprise and government transformation.
+    </p>
 
-    <div class="hero-actions">
+    <div class="hero-actions reveal reveal-delay-2">
       <a href="#solutions" class="btn primary">Explore Solutions</a>
       <a href="#contact" class="btn outline">Schedule Consultation</a>
     </div>
@@ -43,23 +47,23 @@
 </section>
 
 <!-- SOLUTIONS -->
-<section id="solutions" class="section">
+<section id="solutions" class="section reveal">
   <div class="container">
 
-    <h2>What We Do</h2>
+    <h2 class="reveal">What We Do</h2>
 
     <div class="grid-3">
-      <div class="card">
+      <div class="card reveal reveal-delay-1">
         <h3>Digital Transformation</h3>
         <p>Modernizing legacy systems into automated ecosystems.</p>
       </div>
 
-      <div class="card">
+      <div class="card reveal reveal-delay-2">
         <h3>Data Intelligence</h3>
         <p>Turning unstructured data into actionable insights.</p>
       </div>
 
-      <div class="card">
+      <div class="card reveal reveal-delay-3">
         <h3>Systems Engineering</h3>
         <p>Secure architecture across enterprise environments.</p>
       </div>
@@ -69,34 +73,36 @@
 </section>
 
 <!-- CASE STUDIES -->
-<section id="cases" class="section dark">
+<section id="cases" class="section dark reveal">
   <div class="container">
-    <h2>Case Studies</h2>
+    <h2 class="reveal">Case Studies</h2>
 
     <div class="grid-3">
-      <div class="card">Government System Modernization</div>
-      <div class="card">Enterprise Data Migration</div>
-      <div class="card">Workflow Automation Platform</div>
+      <div class="card reveal reveal-delay-1">Government System Modernization</div>
+      <div class="card reveal reveal-delay-2">Enterprise Data Migration</div>
+      <div class="card reveal reveal-delay-3">Workflow Automation Platform</div>
     </div>
   </div>
 </section>
 
 <!-- ABOUT -->
-<section id="about" class="section">
+<section id="about" class="section reveal">
   <div class="container">
-    <h2>About Visture</h2>
+    <h2 class="reveal">About Visture</h2>
 
-    <div class="card">
+    <div class="card reveal reveal-delay-1">
       We design secure, scalable digital ecosystems for mission-critical environments.
     </div>
   </div>
 </section>
 
 <!-- CONTACT -->
-<section id="contact" class="cta">
+<section id="contact" class="cta reveal">
   <div class="container">
-    <h2>Ready to modernize your systems?</h2>
-    <a href="mailto:support@visturetech.com" class="btn primary">Start a Project</a>
+    <h2 class="reveal">Ready to modernize your systems?</h2>
+    <a href="mailto:support@visturetech.com" class="btn primary reveal reveal-delay-1">
+      Start a Project
+    </a>
   </div>
 </section>
 
@@ -106,6 +112,9 @@
   </div>
 </footer>
 
+<!-- =========================
+     AI SYSTEM (UPGRADED)
+========================= -->
 <script>
 const canvas = document.getElementById("ai-grid");
 const ctx = canvas.getContext("2d");
@@ -132,11 +141,14 @@ function createNodes(count) {
   }
 }
 
-/* scroll = intelligence intensity */
+/* SECTION-AWARE INTELLIGENCE */
 function getIntensity() {
-  const heroZone = Math.max(0, 1 - scrollY / 600);
-  const midZone = Math.min(1, scrollY / 1200);
-  return heroZone + midZone * 0.6;
+  const y = scrollY;
+
+  if (y < 500) return 1.2;       // HERO
+  if (y < 1200) return 0.8;      // SOLUTIONS
+  if (y < 2000) return 0.5;      // CASES
+  return 0.3;                    // CTA
 }
 
 function draw() {
@@ -146,7 +158,7 @@ function draw() {
 
   nodes.forEach(n => {
 
-    /* mouse attraction (interaction field) */
+    /* mouse attraction */
     if (mouse.x && mouse.y) {
       const dx = mouse.x - n.x;
       const dy = mouse.y - n.y;
@@ -158,13 +170,22 @@ function draw() {
       }
     }
 
+    /* section behavior */
+    if (scrollY > 600 && scrollY < 1400) {
+      n.vy *= 0.98; // structured feel
+    }
+
+    if (scrollY > 1400) {
+      n.vx *= 0.98;
+      n.vy *= 0.98; // calm mode
+    }
+
     n.x += n.vx * intensity;
     n.y += n.vy * intensity;
 
     if (n.x < 0 || n.x > w) n.vx *= -1;
     if (n.y < 0 || n.y > h) n.vy *= -1;
 
-    /* node strength changes with scroll */
     const size = 1.5 + intensity * 1.5;
 
     ctx.beginPath();
@@ -173,7 +194,6 @@ function draw() {
     ctx.fill();
   });
 
-  /* connections */
   for (let i = 0; i < nodes.length; i++) {
     for (let j = i + 1; j < nodes.length; j++) {
 
@@ -214,9 +234,31 @@ window.addEventListener("mousemove", (e) => {
 window.addEventListener("resize", resize);
 
 resize();
-createNodes(85); // ↑ increased density = more “alive”
+createNodes(85);
 draw();
 </script>
-  
+
+<!-- =========================
+     SCROLL REVEAL SYSTEM
+========================= -->
+<script>
+const reveals = document.querySelectorAll(".reveal");
+
+function revealOnScroll() {
+  const trigger = window.innerHeight * 0.85;
+
+  reveals.forEach(el => {
+    const top = el.getBoundingClientRect().top;
+
+    if (top < trigger) {
+      el.classList.add("active");
+    }
+  });
+}
+
+window.addEventListener("scroll", revealOnScroll);
+window.addEventListener("load", revealOnScroll);
+</script>
+
 </body>
 </html>

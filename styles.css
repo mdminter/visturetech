@@ -111,7 +111,7 @@ body::after {
 }
 
 .logo img {
-  height: 42px;
+  height: 72px;
   width: auto;
   display: block;
   filter: drop-shadow(0 0 16px rgba(212,175,55,0.25))

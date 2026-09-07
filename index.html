@@ -320,127 +320,408 @@
   </div>
 </footer>
 
-<!-- =========================
-     AI SYSTEM
-========================= -->
 <script>
+/* =========================================================
+   VISTURE AI INTELLIGENCE BACKGROUND
+   Continuous animated network field
+========================================================= */
+
 const canvas = document.getElementById("ai-grid");
-const ctx = canvas.getContext("2d");
+const ctx = canvas.getContext("2d", { alpha: true });
 
-let w, h;
+let width = 0;
+let height = 0;
+let dpr = 1;
+
 let nodes = [];
-let mouse = { x: null, y: null };
-let scrollY = 0;
 
-function resize() {
-  w = canvas.width = window.innerWidth;
-  h = canvas.height = window.innerHeight;
+const pointer = {
+  x: null,
+  y: null,
+  active: false
+};
+
+let lastTime = 0;
+
+
+/* =========================================================
+   DEVICE / PERFORMANCE SETTINGS
+========================================================= */
+
+function getNodeCount() {
+  const area = window.innerWidth * window.innerHeight;
+
+  /* Mobile */
+  if (window.innerWidth <= 640) {
+    return Math.min(42, Math.max(28, Math.floor(area / 18000)));
+  }
+
+  /* Tablet */
+  if (window.innerWidth <= 1000) {
+    return Math.min(60, Math.max(40, Math.floor(area / 15000)));
+  }
+
+  /* Desktop */
+  return Math.min(85, Math.max(60, Math.floor(area / 14000)));
 }
 
+
+/* =========================================================
+   RESIZE
+========================================================= */
+
+function resizeCanvas() {
+
+  dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+  width = window.innerWidth;
+  height = window.innerHeight;
+
+  canvas.style.width = width + "px";
+  canvas.style.height = height + "px";
+
+  canvas.width = Math.floor(width * dpr);
+  canvas.height = Math.floor(height * dpr);
+
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  createNodes(getNodeCount());
+}
+
+
+/* =========================================================
+   CREATE NODES
+========================================================= */
+
 function createNodes(count) {
+
   nodes = [];
+
   for (let i = 0; i < count; i++) {
+
+    const angle = Math.random() * Math.PI * 2;
+    const speed = 0.15 + Math.random() * 0.35;
+
     nodes.push({
-      x: Math.random() * w,
-      y: Math.random() * h,
-      vx: (Math.random() - 0.5) * 0.6,
-      vy: (Math.random() - 0.5) * 0.6
+
+      x: Math.random() * width,
+      y: Math.random() * height,
+
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed,
+
+      radius: 1.2 + Math.random() * 1.2,
+
+      /* Small variation keeps the network organic */
+      phase: Math.random() * Math.PI * 2,
+
+      drift: 0.4 + Math.random() * 0.6
     });
   }
 }
 
-function getIntensity() {
-  const y = scrollY;
 
-  if (y < 500) return 1.2;
-  if (y < 1200) return 0.8;
-  if (y < 2000) return 0.5;
-  return 0.3;
+/* =========================================================
+   POINTER
+========================================================= */
+
+window.addEventListener("mousemove", function (e) {
+
+  pointer.x = e.clientX;
+  pointer.y = e.clientY;
+  pointer.active = true;
+
+});
+
+
+window.addEventListener("mouseleave", function () {
+
+  pointer.active = false;
+
+});
+
+
+/* =========================================================
+   TOUCH
+========================================================= */
+
+window.addEventListener(
+  "touchmove",
+  function (e) {
+
+    if (!e.touches || !e.touches.length) return;
+
+    pointer.x = e.touches[0].clientX;
+    pointer.y = e.touches[0].clientY;
+    pointer.active = true;
+
+  },
+  { passive: true }
+);
+
+
+window.addEventListener(
+  "touchend",
+  function () {
+
+    pointer.active = false;
+
+  },
+  { passive: true }
+);
+
+
+/* =========================================================
+   UPDATE NODE
+========================================================= */
+
+function updateNode(node, delta, time) {
+
+  /* -----------------------------------------
+     Natural movement
+  ----------------------------------------- */
+
+  const wobbleX =
+    Math.sin(time * 0.00045 + node.phase) *
+    0.025 *
+    node.drift;
+
+  const wobbleY =
+    Math.cos(time * 0.00040 + node.phase) *
+    0.025 *
+    node.drift;
+
+  node.vx += wobbleX * delta;
+  node.vy += wobbleY * delta;
+
+
+  /* -----------------------------------------
+     Keep velocity within a healthy range
+     so particles never slowly die.
+  ----------------------------------------- */
+
+  const speed = Math.sqrt(
+    node.vx * node.vx +
+    node.vy * node.vy
+  );
+
+  const minSpeed = 0.12;
+  const maxSpeed = 0.55;
+
+  if (speed < minSpeed) {
+
+    const angle = Math.random() * Math.PI * 2;
+
+    node.vx += Math.cos(angle) * 0.02;
+    node.vy += Math.sin(angle) * 0.02;
+
+  }
+
+  if (speed > maxSpeed) {
+
+    node.vx *= 0.98;
+    node.vy *= 0.98;
+
+  }
+
+
+  /* -----------------------------------------
+     Mouse / touch interaction
+  ----------------------------------------- */
+
+  if (pointer.active &&
+      pointer.x !== null &&
+      pointer.y !== null) {
+
+    const dx = pointer.x - node.x;
+    const dy = pointer.y - node.y;
+
+    const distance = Math.sqrt(dx * dx + dy * dy);
+
+    const interactionRadius = 150;
+
+    if (distance < interactionRadius && distance > 0) {
+
+      const force =
+        (1 - distance / interactionRadius) * 0.025;
+
+      node.vx += dx / distance * force;
+      node.vy += dy / distance * force;
+
+    }
+  }
+
+
+  /* -----------------------------------------
+     Move
+  ----------------------------------------- */
+
+  node.x += node.vx * delta;
+  node.y += node.vy * delta;
+
+
+  /* -----------------------------------------
+     Wrap around edges
+     instead of bouncing
+  ----------------------------------------- */
+
+  if (node.x < -20) {
+    node.x = width + 20;
+  }
+
+  if (node.x > width + 20) {
+    node.x = -20;
+  }
+
+  if (node.y < -20) {
+    node.y = height + 20;
+  }
+
+  if (node.y > height + 20) {
+    node.y = -20;
+  }
 }
 
-function draw() {
-  ctx.clearRect(0, 0, w, h);
 
-  const intensity = getIntensity();
+/* =========================================================
+   DRAW
+========================================================= */
 
-  nodes.forEach(n => {
-    if (mouse.x && mouse.y) {
-      const dx = mouse.x - n.x;
-      const dy = mouse.y - n.y;
-      const dist = Math.sqrt(dx * dx + dy * dy);
+function draw(time) {
 
-      if (dist < 120) {
-        n.x += dx * 0.002 * intensity;
-        n.y += dy * 0.002 * intensity;
-      }
-    }
+  ctx.clearRect(0, 0, width, height);
 
-    if (scrollY > 600 && scrollY < 1400) {
-      n.vy *= 0.98;
-    }
+  const delta =
+    lastTime
+      ? Math.min((time - lastTime) / 16.67, 2)
+      : 1;
 
-    if (scrollY > 1400) {
-      n.vx *= 0.98;
-      n.vy *= 0.98;
-    }
+  lastTime = time;
 
-    n.x += n.vx * intensity;
-    n.y += n.vy * intensity;
 
-    if (n.x < 0 || n.x > w) n.vx *= -1;
-    if (n.y < 0 || n.y > h) n.vy *= -1;
+  /* -----------------------------------------
+     Update nodes
+  ----------------------------------------- */
 
-    const size = 1.5 + intensity * 1.5;
+  nodes.forEach(node => {
 
-    ctx.beginPath();
-    ctx.arc(n.x, n.y, size, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(212,175,55,${0.15 + intensity * 0.35})`;
-    ctx.fill();
+    updateNode(node, delta, time);
+
   });
 
+
+  /* -----------------------------------------
+     Draw connecting lines
+  ----------------------------------------- */
+
+  const connectionDistance =
+    window.innerWidth <= 640
+      ? 105
+      : 125;
+
   for (let i = 0; i < nodes.length; i++) {
+
     for (let j = i + 1; j < nodes.length; j++) {
-      const dx = nodes[i].x - nodes[j].x;
-      const dy = nodes[i].y - nodes[j].y;
-      const dist = Math.sqrt(dx * dx + dy * dy);
 
-      const threshold = 110 + (1 - intensity) * 60;
+      const a = nodes[i];
+      const b = nodes[j];
 
-      if (dist < threshold) {
+      const dx = a.x - b.x;
+      const dy = a.y - b.y;
+
+      const distanceSquared =
+        dx * dx + dy * dy;
+
+      const maxDistanceSquared =
+        connectionDistance * connectionDistance;
+
+      if (distanceSquared < maxDistanceSquared) {
+
+        const distance = Math.sqrt(distanceSquared);
+
+        const opacity =
+          (1 - distance / connectionDistance) * 0.32;
+
         ctx.beginPath();
-        ctx.moveTo(nodes[i].x, nodes[i].y);
-        ctx.lineTo(nodes[j].x, nodes[j].y);
 
-        ctx.strokeStyle = `rgba(212,175,55,${(1 - dist / threshold) * intensity})`;
-        ctx.lineWidth = 0.4;
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+
+        ctx.strokeStyle =
+          `rgba(212,175,55,${opacity})`;
+
+        ctx.lineWidth = 0.45;
+
         ctx.stroke();
       }
     }
   }
 
+
+  /* -----------------------------------------
+     Draw nodes
+  ----------------------------------------- */
+
+  nodes.forEach(node => {
+
+    const pulse =
+      1 +
+      Math.sin(time * 0.002 + node.phase) *
+      0.18;
+
+    const radius =
+      node.radius * pulse;
+
+    ctx.beginPath();
+
+    ctx.arc(
+      node.x,
+      node.y,
+      radius,
+      0,
+      Math.PI * 2
+    );
+
+    ctx.fillStyle =
+      "rgba(212,175,55,0.58)";
+
+    ctx.fill();
+
+  });
+
+
   requestAnimationFrame(draw);
 }
 
-window.addEventListener("scroll", () => {
-  scrollY = window.scrollY;
-});
 
-window.addEventListener("mousemove", (e) => {
-  mouse.x = e.clientX;
-  mouse.y = e.clientY;
-});
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
 
-window.addEventListener("resize", resize);
+const prefersReducedMotion =
+  window.matchMedia(
+    "(prefers-reduced-motion: reduce)"
+  ).matches;
 
-resize();
-createNodes(85);
 
-const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+/* =========================================================
+   START
+========================================================= */
+
+window.addEventListener(
+  "resize",
+  resizeCanvas
+);
+
+resizeCanvas();
+
 if (!prefersReducedMotion) {
-  draw();
+
+  requestAnimationFrame(draw);
+
 }
 </script>
-
+  
 <!-- =========================
      SCROLL REVEAL SYSTEM
 ========================= -->

@@ -322,406 +322,476 @@
 
 <script>
 /* =========================================================
-   VISTURE AI INTELLIGENCE BACKGROUND
-   Continuous animated network field
-========================================================= */
+   VISTURE TECHNOLOGIES
+   Animated AI / Neural Network Background
+   ========================================================= */
 
-const canvas = document.getElementById("ai-grid");
-const ctx = canvas.getContext("2d", { alpha: true });
+(() => {
+  const canvas = document.getElementById("ai-grid");
 
-let width = 0;
-let height = 0;
-let dpr = 1;
-
-let nodes = [];
-
-const pointer = {
-  x: null,
-  y: null,
-  active: false
-};
-
-let lastTime = 0;
-
-
-/* =========================================================
-   DEVICE / PERFORMANCE SETTINGS
-========================================================= */
-
-function getNodeCount() {
-  const area = window.innerWidth * window.innerHeight;
-
-  /* Mobile */
-  if (window.innerWidth <= 640) {
-    return Math.min(42, Math.max(28, Math.floor(area / 18000)));
+  if (!canvas) {
+    console.warn("Visture AI grid canvas not found.");
+    return;
   }
 
-  /* Tablet */
-  if (window.innerWidth <= 1000) {
-    return Math.min(60, Math.max(40, Math.floor(area / 15000)));
+  const ctx = canvas.getContext("2d", { alpha: true });
+
+  if (!ctx) {
+    console.warn("Visture AI grid canvas context unavailable.");
+    return;
   }
 
-  /* Desktop */
-  return Math.min(85, Math.max(60, Math.floor(area / 14000)));
-}
+  let width = 0;
+  let height = 0;
+  let dpr = 1;
+  let nodes = [];
+  let animationFrame;
 
+  /*
+   * Pointer position.
+   * Works with mouse and touch.
+   */
+  const pointer = {
+    x: null,
+    y: null,
+    active: false
+  };
 
-/* =========================================================
-   RESIZE
-========================================================= */
+  /*
+   * ---------------------------------------------------------
+   * SETTINGS
+   * ---------------------------------------------------------
+   */
 
-function resizeCanvas() {
+  const SETTINGS = {
+    desktopNodes: 75,
+    tabletNodes: 55,
+    mobileNodes: 38,
 
-  dpr = Math.min(window.devicePixelRatio || 1, 2);
+    desktopConnectionDistance: 135,
+    mobileConnectionDistance: 105,
 
-  width = window.innerWidth;
-  height = window.innerHeight;
+    minSpeed: 0.10,
+    maxSpeed: 0.42,
 
-  canvas.style.width = width + "px";
-  canvas.style.height = height + "px";
+    nodeRadiusMin: 1.2,
+    nodeRadiusMax: 2.5,
 
-  canvas.width = Math.floor(width * dpr);
-  canvas.height = Math.floor(height * dpr);
+    pointerRadius: 150,
+    pointerForce: 0.018,
 
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    lineWidth: 0.55,
 
-  createNodes(getNodeCount());
-}
+    /*
+     * Gold used by the Visture design.
+     */
+    gold: "212,175,55"
+  };
 
+  /*
+   * ---------------------------------------------------------
+   * DEVICE / NODE COUNT
+   * ---------------------------------------------------------
+   */
 
-/* =========================================================
-   CREATE NODES
-========================================================= */
+  function getNodeCount() {
+    const viewportWidth = window.innerWidth;
 
-function createNodes(count) {
+    if (viewportWidth <= 640) {
+      return SETTINGS.mobileNodes;
+    }
 
-  nodes = [];
+    if (viewportWidth <= 1000) {
+      return SETTINGS.tabletNodes;
+    }
 
-  for (let i = 0; i < count; i++) {
-
-    const angle = Math.random() * Math.PI * 2;
-    const speed = 0.15 + Math.random() * 0.35;
-
-    nodes.push({
-
-      x: Math.random() * width,
-      y: Math.random() * height,
-
-      vx: Math.cos(angle) * speed,
-      vy: Math.sin(angle) * speed,
-
-      radius: 1.2 + Math.random() * 1.2,
-
-      /* Small variation keeps the network organic */
-      phase: Math.random() * Math.PI * 2,
-
-      drift: 0.4 + Math.random() * 0.6
-    });
+    return SETTINGS.desktopNodes;
   }
-}
 
+  /*
+   * ---------------------------------------------------------
+   * RESIZE CANVAS
+   *
+   * Uses devicePixelRatio so the network remains sharp on
+   * high-resolution desktop displays and phones.
+   * ---------------------------------------------------------
+   */
 
-/* =========================================================
-   POINTER
-========================================================= */
+  function resizeCanvas() {
+    width = window.innerWidth;
+    height = window.innerHeight;
 
-window.addEventListener("mousemove", function (e) {
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
 
-  pointer.x = e.clientX;
-  pointer.y = e.clientY;
-  pointer.active = true;
+    canvas.width = Math.round(width * dpr);
+    canvas.height = Math.round(height * dpr);
 
-});
+    canvas.style.width = width + "px";
+    canvas.style.height = height + "px";
 
+    /*
+     * Draw using CSS-pixel coordinates while rendering at
+     * the device's native resolution.
+     */
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-window.addEventListener("mouseleave", function () {
+    /*
+     * Rebuild the network when the viewport changes size.
+     */
+    createNodes(getNodeCount());
+  }
 
-  pointer.active = false;
+  /*
+   * ---------------------------------------------------------
+   * CREATE NODES
+   * ---------------------------------------------------------
+   */
 
-});
+  function createNodes(count) {
+    nodes = [];
 
+    for (let i = 0; i < count; i++) {
+      const angle = Math.random() * Math.PI * 2;
 
-/* =========================================================
-   TOUCH
-========================================================= */
+      const speed =
+        SETTINGS.minSpeed +
+        Math.random() *
+          (SETTINGS.maxSpeed - SETTINGS.minSpeed);
 
-window.addEventListener(
-  "touchmove",
-  function (e) {
+      nodes.push({
+        x: Math.random() * width,
+        y: Math.random() * height,
 
-    if (!e.touches || !e.touches.length) return;
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
 
-    pointer.x = e.touches[0].clientX;
-    pointer.y = e.touches[0].clientY;
-    pointer.active = true;
+        radius:
+          SETTINGS.nodeRadiusMin +
+          Math.random() *
+            (SETTINGS.nodeRadiusMax -
+              SETTINGS.nodeRadiusMin),
 
-  },
-  { passive: true }
-);
+        /*
+         * Slight individual brightness variation.
+         */
+        alpha:
+          0.35 +
+          Math.random() * 0.45,
 
+        /*
+         * Gives each point slightly different movement.
+         */
+        phase: Math.random() * Math.PI * 2,
 
-window.addEventListener(
-  "touchend",
-  function () {
+        wobble:
+          0.0008 +
+          Math.random() * 0.0015
+      });
+    }
+  }
 
-    pointer.active = false;
+  /*
+   * ---------------------------------------------------------
+   * POINTER / MOUSE
+   * ---------------------------------------------------------
+   */
 
-  },
-  { passive: true }
-);
-
-
-/* =========================================================
-   UPDATE NODE
-========================================================= */
-
-function updateNode(node, delta, time) {
-
-  /* -----------------------------------------
-     Natural movement
-  ----------------------------------------- */
-
-  const wobbleX =
-    Math.sin(time * 0.00045 + node.phase) *
-    0.025 *
-    node.drift;
-
-  const wobbleY =
-    Math.cos(time * 0.00040 + node.phase) *
-    0.025 *
-    node.drift;
-
-  node.vx += wobbleX * delta;
-  node.vy += wobbleY * delta;
-
-
-  /* -----------------------------------------
-     Keep velocity within a healthy range
-     so particles never slowly die.
-  ----------------------------------------- */
-
-  const speed = Math.sqrt(
-    node.vx * node.vx +
-    node.vy * node.vy
+  window.addEventListener(
+    "mousemove",
+    (event) => {
+      pointer.x = event.clientX;
+      pointer.y = event.clientY;
+      pointer.active = true;
+    },
+    { passive: true }
   );
 
-  const minSpeed = 0.12;
-  const maxSpeed = 0.55;
+  window.addEventListener(
+    "mouseleave",
+    () => {
+      pointer.x = null;
+      pointer.y = null;
+      pointer.active = false;
+    },
+    { passive: true }
+  );
 
-  if (speed < minSpeed) {
+  /*
+   * ---------------------------------------------------------
+   * TOUCH
+   * ---------------------------------------------------------
+   */
 
-    const angle = Math.random() * Math.PI * 2;
+  window.addEventListener(
+    "touchstart",
+    (event) => {
+      if (!event.touches || !event.touches.length) return;
 
-    node.vx += Math.cos(angle) * 0.02;
-    node.vy += Math.sin(angle) * 0.02;
+      pointer.x = event.touches[0].clientX;
+      pointer.y = event.touches[0].clientY;
+      pointer.active = true;
+    },
+    { passive: true }
+  );
 
-  }
+  window.addEventListener(
+    "touchmove",
+    (event) => {
+      if (!event.touches || !event.touches.length) return;
 
-  if (speed > maxSpeed) {
+      pointer.x = event.touches[0].clientX;
+      pointer.y = event.touches[0].clientY;
+      pointer.active = true;
+    },
+    { passive: true }
+  );
 
-    node.vx *= 0.98;
-    node.vy *= 0.98;
+  window.addEventListener(
+    "touchend",
+    () => {
+      pointer.x = null;
+      pointer.y = null;
+      pointer.active = false;
+    },
+    { passive: true }
+  );
 
-  }
+  /*
+   * ---------------------------------------------------------
+   * UPDATE NODE
+   * ---------------------------------------------------------
+   */
 
+  function updateNode(node, time) {
 
-  /* -----------------------------------------
-     Mouse / touch interaction
-  ----------------------------------------- */
+    /*
+     * Very subtle organic movement.
+     */
+    node.vx += Math.sin(time * node.wobble + node.phase) * 0.002;
+    node.vy += Math.cos(time * node.wobble + node.phase) * 0.002;
 
-  if (pointer.active &&
-      pointer.x !== null &&
-      pointer.y !== null) {
-
-    const dx = pointer.x - node.x;
-    const dy = pointer.y - node.y;
-
-    const distance = Math.sqrt(dx * dx + dy * dy);
-
-    const interactionRadius = 150;
-
-    if (distance < interactionRadius && distance > 0) {
-
-      const force =
-        (1 - distance / interactionRadius) * 0.025;
-
-      node.vx += dx / distance * force;
-      node.vy += dy / distance * force;
-
-    }
-  }
-
-
-  /* -----------------------------------------
-     Move
-  ----------------------------------------- */
-
-  node.x += node.vx * delta;
-  node.y += node.vy * delta;
-
-
-  /* -----------------------------------------
-     Wrap around edges
-     instead of bouncing
-  ----------------------------------------- */
-
-  if (node.x < -20) {
-    node.x = width + 20;
-  }
-
-  if (node.x > width + 20) {
-    node.x = -20;
-  }
-
-  if (node.y < -20) {
-    node.y = height + 20;
-  }
-
-  if (node.y > height + 20) {
-    node.y = -20;
-  }
-}
-
-
-/* =========================================================
-   DRAW
-========================================================= */
-
-function draw(time) {
-
-  ctx.clearRect(0, 0, width, height);
-
-  const delta =
-    lastTime
-      ? Math.min((time - lastTime) / 16.67, 2)
-      : 1;
-
-  lastTime = time;
-
-
-  /* -----------------------------------------
-     Update nodes
-  ----------------------------------------- */
-
-  nodes.forEach(node => {
-
-    updateNode(node, delta, time);
-
-  });
-
-
-  /* -----------------------------------------
-     Draw connecting lines
-  ----------------------------------------- */
-
-  const connectionDistance =
-    window.innerWidth <= 640
-      ? 105
-      : 125;
-
-  for (let i = 0; i < nodes.length; i++) {
-
-    for (let j = i + 1; j < nodes.length; j++) {
-
-      const a = nodes[i];
-      const b = nodes[j];
-
-      const dx = a.x - b.x;
-      const dy = a.y - b.y;
-
-      const distanceSquared =
-        dx * dx + dy * dy;
-
-      const maxDistanceSquared =
-        connectionDistance * connectionDistance;
-
-      if (distanceSquared < maxDistanceSquared) {
-
-        const distance = Math.sqrt(distanceSquared);
-
-        const opacity =
-          (1 - distance / connectionDistance) * 0.32;
-
-        ctx.beginPath();
-
-        ctx.moveTo(a.x, a.y);
-        ctx.lineTo(b.x, b.y);
-
-        ctx.strokeStyle =
-          `rgba(212,175,55,${opacity})`;
-
-        ctx.lineWidth = 0.45;
-
-        ctx.stroke();
-      }
-    }
-  }
-
-
-  /* -----------------------------------------
-     Draw nodes
-  ----------------------------------------- */
-
-  nodes.forEach(node => {
-
-    const pulse =
-      1 +
-      Math.sin(time * 0.002 + node.phase) *
-      0.18;
-
-    const radius =
-      node.radius * pulse;
-
-    ctx.beginPath();
-
-    ctx.arc(
-      node.x,
-      node.y,
-      radius,
-      0,
-      Math.PI * 2
+    /*
+     * Keep velocity within reasonable limits.
+     */
+    const speed = Math.sqrt(
+      node.vx * node.vx +
+      node.vy * node.vy
     );
 
-    ctx.fillStyle =
-      "rgba(212,175,55,0.58)";
+    if (speed > SETTINGS.maxSpeed) {
+      node.vx =
+        (node.vx / speed) *
+        SETTINGS.maxSpeed;
 
-    ctx.fill();
+      node.vy =
+        (node.vy / speed) *
+        SETTINGS.maxSpeed;
+    }
 
-  });
+    /*
+     * Pointer interaction.
+     *
+     * Nodes are gently attracted toward the cursor/touch
+     * rather than violently jumping.
+     */
+    if (
+      pointer.active &&
+      pointer.x !== null &&
+      pointer.y !== null
+    ) {
+      const dx = pointer.x - node.x;
+      const dy = pointer.y - node.y;
 
+      const distance = Math.sqrt(
+        dx * dx + dy * dy
+      );
 
-  requestAnimationFrame(draw);
-}
+      if (
+        distance > 0 &&
+        distance < SETTINGS.pointerRadius
+      ) {
+        const strength =
+          (1 - distance / SETTINGS.pointerRadius) *
+          SETTINGS.pointerForce;
 
+        node.vx += dx * strength * 0.01;
+        node.vy += dy * strength * 0.01;
+      }
+    }
 
-/* =========================================================
-   REDUCED MOTION
-========================================================= */
+    /*
+     * Move.
+     */
+    node.x += node.vx;
+    node.y += node.vy;
 
-const prefersReducedMotion =
-  window.matchMedia(
-    "(prefers-reduced-motion: reduce)"
-  ).matches;
+    /*
+     * Wrap around the screen.
+     *
+     * This prevents particles from getting stuck against
+     * the edges and keeps the network continuously populated.
+     */
+    if (node.x < -20) {
+      node.x = width + 20;
+    }
 
+    if (node.x > width + 20) {
+      node.x = -20;
+    }
 
-/* =========================================================
-   START
-========================================================= */
+    if (node.y < -20) {
+      node.y = height + 20;
+    }
 
-window.addEventListener(
-  "resize",
-  resizeCanvas
-);
+    if (node.y > height + 20) {
+      node.y = -20;
+    }
+  }
 
-resizeCanvas();
+  /*
+   * ---------------------------------------------------------
+   * DRAW
+   * ---------------------------------------------------------
+   */
 
-if (!prefersReducedMotion) {
+  function draw(time) {
 
-  requestAnimationFrame(draw);
+    /*
+     * Clear the canvas.
+     */
+    ctx.clearRect(0, 0, width, height);
 
-}
-</script>
-  
+    /*
+     * Update nodes first.
+     *
+     * IMPORTANT:
+     * There is intentionally NO scroll-based damping here.
+     *
+     * The AI network continues moving while the user scrolls
+     * through the entire Visture website.
+     */
+    nodes.forEach((node) => {
+      updateNode(node, time);
+
+      /*
+       * Draw node.
+       */
+      ctx.beginPath();
+
+      ctx.arc(
+        node.x,
+        node.y,
+        node.radius,
+        0,
+        Math.PI * 2
+      );
+
+      ctx.fillStyle =
+        `rgba(${SETTINGS.gold},${node.alpha})`;
+
+      ctx.fill();
+    });
+
+    /*
+     * -------------------------------------------------------
+     * CONNECTIONS
+     * -------------------------------------------------------
+     */
+
+    const connectionDistance =
+      window.innerWidth <= 640
+        ? SETTINGS.mobileConnectionDistance
+        : SETTINGS.desktopConnectionDistance;
+
+    for (let i = 0; i < nodes.length; i++) {
+
+      for (let j = i + 1; j < nodes.length; j++) {
+
+        const a = nodes[i];
+        const b = nodes[j];
+
+        const dx = a.x - b.x;
+        const dy = a.y - b.y;
+
+        const distance =
+          Math.sqrt(dx * dx + dy * dy);
+
+        if (distance < connectionDistance) {
+
+          /*
+           * Lines become brighter as nodes get closer.
+           */
+          const opacity =
+            (1 - distance / connectionDistance) *
+            0.65;
+
+          ctx.beginPath();
+
+          ctx.moveTo(a.x, a.y);
+          ctx.lineTo(b.x, b.y);
+
+          ctx.strokeStyle =
+            `rgba(${SETTINGS.gold},${opacity})`;
+
+          ctx.lineWidth = SETTINGS.lineWidth;
+
+          ctx.stroke();
+        }
+      }
+    }
+
+    /*
+     * -------------------------------------------------------
+     * CONTINUE ANIMATION
+     * -------------------------------------------------------
+     *
+     * We intentionally do NOT check:
+     *
+     * prefers-reduced-motion
+     *
+     * because Visture's background is intended to remain
+     * animated on desktop AND mobile.
+     */
+    animationFrame =
+      requestAnimationFrame(draw);
+  }
+
+  /*
+   * ---------------------------------------------------------
+   * RESIZE
+   * ---------------------------------------------------------
+   */
+
+  let resizeTimer;
+
+  window.addEventListener(
+    "resize",
+    () => {
+      clearTimeout(resizeTimer);
+
+      resizeTimer = setTimeout(() => {
+        resizeCanvas();
+      }, 100);
+    },
+    { passive: true }
+  );
+
+  /*
+   * ---------------------------------------------------------
+   * INITIALIZE
+   * ---------------------------------------------------------
+   */
+
+  resizeCanvas();
+
+  /*
+   * Start animation immediately.
+   */
+  animationFrame =
+    requestAnimationFrame(draw);
+
+})();
+</script>  
 <!-- =========================
      SCROLL REVEAL SYSTEM
 ========================= -->
